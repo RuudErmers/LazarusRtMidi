@@ -1,0 +1,104 @@
+unit Unit1;
+
+{$mode delphi}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  ExtCtrls, urtmidi;
+
+{ TForm1 }
+
+  type TForm1 = class(TForm)
+    Button1: TButton;
+    ButtonMidiInput: TButton;
+    ButtonOutput: TButton;
+    Memo1: TMemo;
+    Timer1: TTimer;
+    procedure Button1Click(Sender: TObject);
+    procedure ButtonMidiInputClick(Sender: TObject);
+    procedure ButtonOutputClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+  private
+    { private declarations }
+    FMidiOut:TMidiOut;
+    FMidiIn:TMidiIn;
+    FMidiInBuffer:array[0..31] of string;
+    FMidiInHead,FMidiInTail:integer;
+    procedure OnMidiInput(buffer:TMidiOutBuffer; size:integer);
+  public
+    { public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.lfm}
+
+{ TForm1 }
+
+procedure TForm1.OnMidiInput(buffer:TMidiOutBuffer; size:integer);
+VAR s:string;
+    i:integer;
+begin
+  s:='';
+  for i:=0 to size-1 do s:=s+' '+inttostr(buffer[i]);
+  FMidiInBuffer[FMidiInHead]:=s;
+  FMidiInHead:=(1+FMidiInHead) MOD 32;
+//  Memo1.Lines.add('Event: '+inttostr(size)+s);
+end;
+
+procedure TForm1.ButtonOutputClick(Sender: TObject);
+VAR i:integer;
+    buf:TMidiOutBuffer;
+begin
+  FMidiOut:=TMidiOut.Create;
+  FMidiOut.openPort('X-Touch Mini');
+
+  buf[0]:=176;
+  buf[1]:=127;
+  buf[2]:=1;
+  FMidiOut.sendMessage(buf,3);
+  for i:=0 to 7 do
+    begin
+      buf[1]:=48+i;
+      buf[2]:=i;
+      FMidiOut.sendMessage(buf,3);
+    end;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  while FMidiInHead<>FMidiInTail do
+  begin
+    Memo1.Lines.Add(FMidiInBuffer[FMidiInTail]);
+    FMidiInTail:=(1+FMidiInTail) MOD 32;
+  end;
+end;
+
+procedure TForm1.ButtonMidiInputClick(Sender: TObject);
+begin
+  FMidiInHead:=0;
+  FMidiInTail:=0;
+  FMidiIn:=TMidiIn.Create;
+  FMidiIn.OpenPort('X-Touch Mini');
+  FMidiIn.OnMidiInput:=OnMidiInput;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+VAR i,n,dum:integer;
+begin
+  FMidiOut:=TMidiOut.Create;
+  n:=FMidiOut.getPortCount;
+  for i:=0 to n-1 do
+    Memo1.Lines.Add(FMidiOut.getPortName(i));
+  FMidiOut.Free;
+end;
+
+
+
+end.
+

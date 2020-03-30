@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/home/pi/Development/FreePascal/fpc/bin/fpc" Date="1449160366"/>
+  <Params Value=" -MDelphi -Scghi -O1 -g -gl -l -vewnhibq -Fi/home/pi/Documents/Lazarus/fpalsa2/lib/arm-linux -Fl/lib/arm-linux-gnueabihf -Fl/opt/gnome/lib -Fu/home/pi/Development/FreePascal/lazarus/lcl/units/arm-linux/gtk2 -Fu/home/pi/Development/FreePascal/lazarus/lcl/units/arm-linux -Fu/home/pi/Development/FreePascal/lazarus/components/lazutils/lib/arm-linux -Fu/home/pi/Development/FreePascal/lazarus/packager/units/arm-linux -Fu/home/pi/Documents/Lazarus/fpalsa2/ -FU/home/pi/Documents/Lazarus/fpalsa2/lib/arm-linux/ -dLCL -dLCLgtk2 project1.lpr"/>
+</CONFIG>
